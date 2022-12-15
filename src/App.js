@@ -1,23 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+/* eslint-disable */
+import { useEffect, useState } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import { Main, MyPage, SalePage, Test } from './pages/_index'
+import { ethers } from 'ethers'
 
 function App() {
+
+  const [account, setAccount] = useState("");
+
+  const getAccount = async() => {
+    try {
+      if(window.ethereum) {
+        const accounts = await window.ethereum.request({
+          method: "eth_requestAccounts"
+        })
+        setAccount(accounts[0]);
+      } else {
+        alert("install metamask")
+      }
+    } catch(error) {
+      console.log(error)
+    }
+  }
+
+  useEffect( () => {
+    getAccount()
+    //connetContract()
+  },[])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Routes>
+        <Route path='/' element={<Main account={account}/>}/>
+        <Route path='/mypage' element={<MyPage account={account}/>}/>
+        <Route path='/sale' element={<SalePage account={account}/>}/>
+        <Route path='/test' element={<Test account={account}/>}/>
+      </Routes>
     </div>
   );
 }
